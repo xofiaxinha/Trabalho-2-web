@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 const PORT = 3000;
-//const routes = require('./routes/rotas');
+const routes = require('./routes/rotas');
 //const expenses = require('./models/expenses');
 const Sequelize = require('sequelize');
 const config = require('./config/config')[process.env.NODE_ENV || 'development'];
 
 app.use(express.json());
-//app.use(routes);
+app.use(routes);
 
 async function connectToPostgres(){
     const sequelize = new Sequelize(config.postgres.options);

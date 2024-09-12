@@ -3,7 +3,10 @@ const config = require('../config/config');
 
 const db = new Sequelize(config.development.postgres.options);
 
-const Expenses = require('./expenses')(db, Sequelize);
+const Expenses = require('./expense')(db, Sequelize);
 db.sync();
 
-module.exports = db;
+module.exports ={
+    db,
+    Expenses,
+};
