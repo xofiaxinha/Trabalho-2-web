@@ -17,6 +17,11 @@ module.exports = (db, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false
         },
+        pago:{
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        }
     },
     {
         tableName: 'expenses',
