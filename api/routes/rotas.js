@@ -1,22 +1,22 @@
 /* Rotas da aplicação
-    GET /expenses - Retorna a lista de despesas
-    POST /expenses - Adiciona uma nova despesa
-    GET /expenses/:id - Retorna uma despesa específica
+    GET /expenses - Retorna a lista de despesas ✔️
+    POST /expenses - Adiciona uma nova despesa ✔️
+    GET /expenses/:id - Retorna uma despesa específica ✔️
     PUT /expenses/:id - Atualiza uma despesa específica
     DELETE /expenses/:id - Deleta uma despesa específica
 */
 const express = require('express');
 const router = express.Router();
 router.use(express.json());
-const { Expenses } = require('../models');
+const { Expense } = require('../models');
 
 router.get('/expenses', async (req, res) =>{
-    const expensesList = await Expenses.findAll();
+    const expensesList = await Expense.findAll();
     res.json(expensesList);
 })
 router.get('/expenses/:id', async (req, res) =>{
     try{
-        const expense = await Expenses.findByPk(req.params.id);
+        const expense = await Expense.findByPk(req.params.id);
         res.json(expense);
     }
     catch(err){
@@ -29,7 +29,7 @@ router.post('/expenses', async (req, res) =>{
     const isPaid = pago === 'Sim' ? true : false;
     //console.log(isPaid);
     try{
-        const ex = await Expenses.create({titulo: titulo, valor: valor, data: data, pago: isPaid});
+        const ex = await Expense.create({titulo: titulo, valor: valor, data: data, pago: isPaid});
         console.log(ex)
         res.status(201).json(ex);
     }
@@ -37,5 +37,37 @@ router.post('/expenses', async (req, res) =>{
         res.status(400).json({error: err.message});
     }
 })
+router.put('/expenses/:id', async (req, res) =>{
+    const {titulo, valor, data, pago} = req.body;
+    const isPaid = pago === 'Sim' ? true : false;
+    try{
+        const [updated] = await Expense.update({titulo: titulo, valor: valor, data: data, pago: isPaid}, {where: {id: req.params.id}});
+        if(updated){
+            const updatedExpense = await Expense.findByPk(req.params.id);
+            return res.status(200).json(updatedExpense);
+        }
+        else{
+            res.status(404).send('Despesa não encontrada');
+        }
+    }
+    catch(err){
+        res.status(400).json({error: err.message});
+    }
+})
+router.delete('/expenses/:id', async (req, res) =>{
+    try{
+        const deleted = await Expense.destroy({where: {id: req.params.id}});
+        if(deleted){
+            res.status(204).send();
+        }
+        else{
+            res.status(404).send('Despesa não encontrada');
+        }
+    }
+    catch(err){
+        res.status(400).json({error: err.message});
+    }
+})
+
 
 module.exports = router;
