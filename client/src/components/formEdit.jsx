@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-function FormEditarDespesa({titulo, valor, data}) {
+function FormEditarDespesa({expense, handleCancel}) {
+    //console.log("chegooo");
     const [formstate, setFormState] = useState({
-        titulo: titulo,
-        valor: valor,
-        data: data,
+        titulo: expense.title,
+        valor: expense.value,
+        data: expense.date,
     })
 
     function handleChange(event){
@@ -24,6 +25,7 @@ function FormEditarDespesa({titulo, valor, data}) {
             <label htmlFor="data">Data da despesa</label>
             <input type="date" id="data" value={formstate.valor} onChange={handleChange}/>
             <button type="submit">Editar despesa</button>
+            <button type="button" onClick={handleCancel}>Cancelar</button>
         </form>
     )
 }
