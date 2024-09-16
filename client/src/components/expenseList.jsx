@@ -5,25 +5,23 @@ import {Table, TableHeader, TableRow, TableCell} from "./table/table";
 import { TextButton, IconButton } from "./buttons";
 
 function ExpenseList(){
-    /*
     const [expenses, setExpenses] = useState([]);
+
+    useEffect(() => {
+        fetchExpenses();
+    }, []);
 
     const fetchExpenses = async () => {
         try{
-            const response = await axios.get("http://localhost:3000/expenses").then(response => {
-                console.log(response.data);
-            });
-            //setExpenses(response.data);
+            const response = await axios.get("http://localhost:3000/expenses");
+            setExpenses(response.data);
         }
         catch(error){
             console.error("Erro ao buscar despesas", error);
         }
     }
 
-    useEffect(() => {
-        fetchExpenses();
-    }, []);*/
-    const expenses = [
+    /*const expenses = [
         {
             id: 1,
             title: "Despesa 1",
@@ -36,15 +34,20 @@ function ExpenseList(){
             value: 200.00,
             date: "02/01/2021"
         }
-    ];
+    ];*/
     const [showForm, setShowForm] = useState("Nenhum");
-    const [selectedExpense, setSelectedExpense] = useState(expenses[0]);
+    const [selectedExpense, setSelectedExpense] = useState({});
 
+    useEffect(() => {
+        console.log(selectedExpense);
+    }, [selectedExpense]);
+    
     function handleSelect(expense){
+        setShowForm("Editar");
         setSelectedExpense(expense);
-        useEffect(() => {
-            setShowForm("Editar");
-        }, [selectedExpense]);
+    }
+    function handleCancel(){
+        setShowForm("Nenhum");
     }
     function compareObjects(object1, object2){
         return JSON.stringify(object1) === JSON.stringify(object2);
@@ -63,18 +66,18 @@ function ExpenseList(){
             {expenses.map(expense => (
                 <TableRow key={expense.id}>
                     <TableCell>
-                        <p>{expense.title}</p>
+                        <p>{expense.titulo}</p>
                     </TableCell>
                     <TableCell>
-                        <p>{expense.value}</p>
+                        <p>{expense.valor}</p>
                     </TableCell>
                     <TableCell>
-                        <p>{expense.date}</p>
+                        <p>{expense.data}</p>
                     </TableCell>
                     <TableCell>
-                        <TextButton text="Editar" onClick={() => handleSelect(expense)}/>
-                        <TextButton text="Excluir"/>
+                        <TextButton text="Editar" onClick={() => handleSelect(expense)}/><TextButton text="Excluir"/>
                     </TableCell>
+                {showForm === "Editar" && compareObjects(selectedExpense, expense) ? <FormEditarDespesa expense={selectedExpense} handleCancel={handleCancel}/> : null}
                 </TableRow>
             ))}
         </>
