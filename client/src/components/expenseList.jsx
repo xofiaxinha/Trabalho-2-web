@@ -110,13 +110,12 @@ function ExpenseList(){
                     <TableHeader>Pagamento</TableHeader>
                     <TableHeader>Ações</TableHeader>
                 </TableRow>
-            </Table>
             {expenses.map((expense) => (
                 <TableRow key={expense.id}>
                     <TableCell><p>{expense.titulo}</p></TableCell>
-                    <TableCell><p>{expense.valor}</p></TableCell>
+                    <TableCell><p>{`R$ ${expense.valor}`}</p></TableCell>
                     <TableCell><p>{formatDate(expense.data)}</p></TableCell>
-                    <TableCell><p>{expense.pago ? "Pago" : "Não pago"}</p></TableCell>
+                    <TableCell className={expense.pago ? "pago" : "nao-pago"}><p>{expense.pago ? "Pago" : "Não pago"}</p></TableCell>
                     <TableCell>
                         <TextButton text="Editar" onClick={() => handleSelect(expense)}/>
                         <TextButton text="Excluir" onClick={() => handleDelete(expense.id)}/>
@@ -124,6 +123,7 @@ function ExpenseList(){
                 {showForm === "Editar" && compareObjects(selectedExpense, expense) ? <FormEditarDespesa expense={selectedExpense} handleCancel={handleCancel} editExpense={handleEdit}/> : null}
                 </TableRow>
             ))}
+            </Table>
         </>
     )
 }
