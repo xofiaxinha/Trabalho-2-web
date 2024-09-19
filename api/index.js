@@ -7,9 +7,9 @@ const cors = require('cors');
 const Sequelize = require('sequelize');
 const config = require('./config/config')[process.env.NODE_ENV || 'development'];
 
+app.use(cors());
 app.use(express.json());
 app.use(routes);
-app.use(cors());
 
 async function connectToPostgres(){
     const sequelize = new Sequelize(config.postgres.options);

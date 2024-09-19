@@ -9,14 +9,26 @@ const express = require('express');
 const router = express.Router();
 router.use(express.json());
 const { Expense } = require('../models');
+const { Op } = require('sequelize');
 
 router.get('/expenses', async (req, res) =>{
     const expensesList = await Expense.findAll();
     res.json(expensesList);
 })
+/*
 router.get('/expenses/:id', async (req, res) =>{
     try{
         const expense = await Expense.findByPk(req.params.id);
+        res.json(expense);
+    }
+    catch(err){
+        res.status(404).send('Despesa não encontrada');
+    }
+})*/
+router.get('/expenses/:name', async (req, res) =>{
+    const {name} = req.params;
+    try{
+        const expense = await Expense.findAll({where: {titulo: {[Op.like]: `%${name}%`}}});
         res.json(expense);
     }
     catch(err){
@@ -39,9 +51,8 @@ router.post('/expenses', async (req, res) =>{
 })
 router.put('/expenses/:id', async (req, res) =>{
     const {titulo, valor, data, pago} = req.body;
-    const isPaid = pago === 'Sim' ? true : false;
     try{
-        const [updated] = await Expense.update({titulo: titulo, valor: valor, data: data, pago: isPaid}, {where: {id: req.params.id}});
+        const [updated] = await Expense.update({titulo: titulo, valor: valor, data: data, pago: pago}, {where: {id: req.params.id}});
         if(updated){
             const updatedExpense = await Expense.findByPk(req.params.id);
             return res.status(200).json(updatedExpense);
