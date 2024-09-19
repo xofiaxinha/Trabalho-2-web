@@ -3,6 +3,8 @@ import axios from "axios";
 import FormEditarDespesa from "./formEdit";
 import {Table, TableHeader, TableRow, TableCell} from "./table/table";
 import { TextButton, IconButton } from "./buttons";
+import FormCadastroDespesa from "./formCadastro"
+import SearchInput from "./searchButton";
 
 function ExpenseList(){
     const [expenses, setExpenses] = useState([]);
@@ -10,6 +12,13 @@ function ExpenseList(){
     useEffect(() => {
         fetchExpenses();
     }, []);
+    
+    /*
+    useEffect(() => {
+        expenses.sort((a, b) => {
+            return new Date(a.data) - new Date(b.data);
+        });
+    }, [expenses]);*/
 
     const fetchExpenses = async () => {
         try{
@@ -21,20 +30,6 @@ function ExpenseList(){
         }
     }
 
-    /*const expenses = [
-        {
-            id: 1,
-            title: "Despesa 1",
-            value: 100.00,
-            date: "01/01/2021"
-        },
-        {
-            id: 2,
-            title: "Despesa 2",
-            value: 200.00,
-            date: "02/01/2021"
-        }
-    ];*/
     const [showForm, setShowForm] = useState("Nenhum");
     const [selectedExpense, setSelectedExpense] = useState({});
 
@@ -48,36 +43,85 @@ function ExpenseList(){
     }
     function handleCancel(){
         setShowForm("Nenhum");
+        setSelectedExpense(null);
     }
+    function handleAdd(expense){
+        setExpenses([...expenses, expense]);
+        //expenses.push(expense);
+        setSelectedExpense(null);
+    }
+    function handleEdit(updatedExpense){
+        console.log(updatedExpense);
+        expenses.forEach((expense) => {
+            if(expense.id === updatedExpense.id){
+                expense.titulo = updatedExpense.titulo;
+                expense.valor = updatedExpense.valor;
+                expense.data = updatedExpense.data;
+                expense.pago = updatedExpense.pago;
+                //console.log("edited " + expense);
+            }
+        })
+        setExpenses(expenses);  // Atualiza a lista de despesas com a despesa editada
+        setSelectedExpense(null);  // Limpa a seleção após a atualização
+        //console.log(expenses);
+    };
+    
     function compareObjects(object1, object2){
         return JSON.stringify(object1) === JSON.stringify(object2);
     }
+    function handleDelete(id){
+        const c = confirm("Deseja mesmo deletar essa despesa?");
+        if(!c){
+            return;
+        }
+        axios.delete(`http://localhost:3000/expenses/${id}`)
+        .then(() => {
+            setExpenses(expenses.filter(expense => expense.id !== id));
+        })
+        .catch(error => {
+            console.error("Erro ao deletar despesa", error);
+        })
+    }
+    const handleSearch = async (event) =>{
+        const search = event.target.value;
+        const response = await axios.get(`http://localhost:3000/expenses/${search}`);
+        
+        if(response.data) {setExpenses(response.data);}
+    }
+    function formatDate(dataString){
+        const date = new Date(dataString);
+        const dia = String(date.getUTCDate()).padStart(2, '0');
+        const mes = String(date.getUTCMonth() + 1).padStart(2, '0'); // Os meses começam do zero
+        const ano = date.getUTCFullYear();
+        return `${dia}/${mes}/${ano}`;
+    }
+    //let teste = 0;
     return(
         //exemplo por enquanto que eu nao sei oq ta rolando
         <>
+            <TextButton text="Adicionar despesa" onClick={() => setShowForm("Adicionar")}/>
+            {showForm === "Adicionar" ? <FormCadastroDespesa handleCancel={handleCancel} addExpense={handleAdd}/> : null}
+            <SearchInput handleSearch={handleSearch}/>
             <Table>
                 <TableRow>
                     <TableHeader>Despesa</TableHeader>
                     <TableHeader>Valor</TableHeader>
                     <TableHeader>Data</TableHeader>
+                    <TableHeader>Pagamento</TableHeader>
                     <TableHeader>Ações</TableHeader>
                 </TableRow>
             </Table>
-            {expenses.map(expense => (
+            {expenses.map((expense) => (
                 <TableRow key={expense.id}>
+                    <TableCell><p>{expense.titulo}</p></TableCell>
+                    <TableCell><p>{expense.valor}</p></TableCell>
+                    <TableCell><p>{formatDate(expense.data)}</p></TableCell>
+                    <TableCell><p>{expense.pago ? "Pago" : "Não pago"}</p></TableCell>
                     <TableCell>
-                        <p>{expense.titulo}</p>
+                        <TextButton text="Editar" onClick={() => handleSelect(expense)}/>
+                        <TextButton text="Excluir" onClick={() => handleDelete(expense.id)}/>
                     </TableCell>
-                    <TableCell>
-                        <p>{expense.valor}</p>
-                    </TableCell>
-                    <TableCell>
-                        <p>{expense.data}</p>
-                    </TableCell>
-                    <TableCell>
-                        <TextButton text="Editar" onClick={() => handleSelect(expense)}/><TextButton text="Excluir"/>
-                    </TableCell>
-                {showForm === "Editar" && compareObjects(selectedExpense, expense) ? <FormEditarDespesa expense={selectedExpense} handleCancel={handleCancel}/> : null}
+                {showForm === "Editar" && compareObjects(selectedExpense, expense) ? <FormEditarDespesa expense={selectedExpense} handleCancel={handleCancel} editExpense={handleEdit}/> : null}
                 </TableRow>
             ))}
         </>
