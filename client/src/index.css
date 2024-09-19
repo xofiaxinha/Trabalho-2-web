@@ -1,0 +1,72 @@
+@import url(reset.css);
+
+body{
+    height: 100%;
+    width: 100%;
+    background-color: var(--gray-1);
+    font-family: 'Century Gothic', sans-serif;
+}
+.table-container{
+    background-color: var(--white);
+    color: var(--black)
+}
+.table-cell:nth-child(2), .table-cell:nth-child(3), .table-cell:nth-child(4), .table-cell:nth-child(5){
+    border-left: 1px solid var(--pink);
+}
+.table-header{
+    color: var(--gray-2);
+}
+.table-cell.pago{
+    color: var(--gray-2);
+}
+.text-button{
+    color: var(--white);
+    background-color: var(--pink);
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+.text-button:hover{
+    background-color: var(--black);
+}
+.search-button{
+    display: flex;
+    width: 90%;
+    height: 40px;
+    margin: 20px auto;
+}
+.search-button input{
+    width: 90%;
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    font-size: 18px;
+    background-color: var(--white);
+}
+.search-button input::placeholder{
+    color: var(--gray-2);
+}
+.search-button input:focus::placeholder{
+    color: var(--gray-1);
+}
+.search-button input:active, .search-button input:focus{
+    border: none;
+    outline: none;
+    transition: color 0.3s;
+}
+.search-button .icon{
+    width: 10%;
+    height: 100%;
+    border-radius: 0 20px 20px 0;
+    background-color: var(--white);
+    object-fit: cover;
+    display: flex;
+}
+.search-button img{
+    height: 80%;
+    margin: auto;
+    
+}
