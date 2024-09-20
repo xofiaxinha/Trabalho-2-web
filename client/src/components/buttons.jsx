@@ -1,6 +1,7 @@
 export function TextButton(props){
-    return <button {...props} className="text-button">{props.text}</button>;
+    const c = props.className ? props.className + " text-button" : "text-button";
+    return <button {...props} className={c}>{props.text}</button>;
 }
 export function IconButton(props){
-    return <button className="img-button"><img src={props.source} alt={props.alt}/></button>;
+    return <button {...props} className="img-button"><img src={props.source} alt={props.alt}/></button>;
 }

@@ -12,13 +12,6 @@ function ExpenseList(){
     useEffect(() => {
         fetchExpenses();
     }, []);
-    
-    /*
-    useEffect(() => {
-        expenses.sort((a, b) => {
-            return new Date(a.data) - new Date(b.data);
-        });
-    }, [expenses]);*/
 
     const fetchExpenses = async () => {
         try{
@@ -99,7 +92,9 @@ function ExpenseList(){
     return(
         //exemplo por enquanto que eu nao sei oq ta rolando
         <>
-            <TextButton text="Adicionar despesa" onClick={() => setShowForm("Adicionar")}/>
+            <div className="add-button">
+                <TextButton text="Adicionar despesa" className="header-button" onClick={() => setShowForm("Adicionar")}/>
+            </div>
             {showForm === "Adicionar" ? <FormCadastroDespesa handleCancel={handleCancel} addExpense={handleAdd}/> : null}
             <SearchInput handleSearch={handleSearch}/>
             <Table>
@@ -117,8 +112,10 @@ function ExpenseList(){
                     <TableCell><p>{formatDate(expense.data)}</p></TableCell>
                     <TableCell className={expense.pago ? "pago" : "nao-pago"}><p>{expense.pago ? "Pago" : "Não pago"}</p></TableCell>
                     <TableCell>
-                        <TextButton text="Editar" onClick={() => handleSelect(expense)}/>
-                        <TextButton text="Excluir" onClick={() => handleDelete(expense.id)}/>
+                        <div className="buttons actions">
+                            <IconButton onClick={() => handleSelect(expense)} source="https://img.icons8.com/?size=100&id=114092&format=png&color=FEFCF6" alt="editar"/>
+                            <IconButton onClick={() => handleDelete(expense.id)} source="https://img.icons8.com/?size=100&id=114052&format=png&color=FEFCF6" alt="deletar"/>
+                        </div>
                     </TableCell>
                 {showForm === "Editar" && compareObjects(selectedExpense, expense) ? <FormEditarDespesa expense={selectedExpense} handleCancel={handleCancel} editExpense={handleEdit}/> : null}
                 </TableRow>
